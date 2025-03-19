@@ -1,0 +1,15 @@
+opencv-python 
+numpy 
+dlib 
+face-recognition 
+flask
+setuptools
+streamlit
+keras-facenet 
+mtcnn 
+scipy 
+deepface
+tensorflow
+matplotlib
+tf-keras
+keras_vggface
