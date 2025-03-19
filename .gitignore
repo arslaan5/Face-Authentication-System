@@ -3,3 +3,4 @@ venv/
 *.db
 test.py
 assets/
+__pycache__/
