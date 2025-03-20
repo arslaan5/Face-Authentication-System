@@ -4,6 +4,7 @@ import pickle
 import face_recognition
 import cv2 as cv
 import numpy as np
+from datetime import datetime
 
 
 def create_database(conn):
@@ -23,7 +24,8 @@ def create_database(conn):
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            face_encoding BLOB NOT NULL
+            face_encoding BLOB NOT NULL,
+            registration_date TEXT
         )
         ''')
 
@@ -47,12 +49,12 @@ def insert_user(conn, name, face_encoding):
         cursor = conn.cursor()
 
         cursor.execute('''
-        INSERT INTO users (name, face_encoding)
-        VALUES (?, ?)
-        ''', (name, face_encoding))
+        INSERT INTO users (name, face_encoding, registration_date)
+        VALUES (?, ?, ?)
+        ''', (name.strip().title(), face_encoding, datetime.now().strftime("%d-%m-%Y %H:%M:%S")))
 
         conn.commit()
-        print(f"User '{name}' added successfully!")
+        print(f"User '{name.strip().title()}' added successfully!")
 
     except sqlite3.Error as e:
         print("SQLite error:", e)
@@ -135,17 +137,22 @@ def add_user(name, image_path):
 
 
 if __name__ == "__main__":
+    # conn = sqlite3.connect(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+    # create_database(conn)
     # Example: Add a user
-    # add_user("Arslaan Siddiqui", r"E:\Face-Recognition-for-Login-Authentication-System\assets\photo.jpg")
+    # add_user("arslaan siddiqui", r"E:\Face-Recognition-for-Login-Authentication-System\assets\photo.jpg")
     # add_user("Shah Rukh Khan", r"E:\Face-Recognition-for-Login-Authentication-System\assets\shahrukh.jpg")
     # add_user("Hrithik Roshan", r"E:\Face-Recognition-for-Login-Authentication-System\assets\hrithik.jpg")
     # add_user("Alia Bhatt", r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
 
     # Example: Retrieve all users
-    # retrieve_all_users()
+    # users = retrieve_all_users()
+    # for user in users:
+    #     print(f"User: {user['name']}, Encoding Type: {user['face_encoding']}")
 
-    # embedding1 = generate_embedding(r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
-    # print(embedding1)
+    embedding1 = generate_embedding(r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
+    print(embedding1)
+
     # embedding2 = generate_embedding(r"E:\Face-Recognition-for-Login-Authentication-System\assets\photo.jpg")
-    embedding2 = generate_embedding(0.3487)
-    print(embedding2)
+    # embedding2 = generate_embedding(0.3487)
+    # print(embedding2)
