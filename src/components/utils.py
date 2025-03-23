@@ -92,14 +92,14 @@ def generate_embedding(img):
     """Generate face embeddings
 
     Args:
-        img (str or NumPy array): Path to the image file or Numpy array of the image
+        img (str or np.ndarray): Path to the image file or Numpy array of the image
 
     Returns:
         List: Face embedding of the image
     """
 
     if isinstance(img, str):
-        if not os.path.exists(img):
+        if not os.path.isfile(img):
             raise FileNotFoundError(f"Image file '{img}' not found!")
         image = cv.imread(img)
     elif isinstance(img, np.ndarray):
@@ -107,8 +107,24 @@ def generate_embedding(img):
     else:
         raise ValueError("Invalid input type. Please provide a filepath or a NumPy array.")
     
-    image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+    # Validate image format
+    if image is None or len(image.shape) < 2:
+        raise ValueError("Invalid image. Please provide a valid image file or array.")
+    
+    # Convert image to RGB if needed
+    if image.shape[-1] == 1:  # Grayscale to RGB
+        image = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
+    elif image.shape[-1] == 3:  # BGR to RGB
+        image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+
+    # Ensure the image is in 8-bit format
+    if image.dtype != np.uint8:
+        image = cv.normalize(image, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
+
     embedding = face_recognition.face_encodings(image, num_jitters=3)
+    
+    if not embedding:
+        raise ValueError("No face detected in the image.")
     
     return embedding[0]
 
@@ -136,8 +152,16 @@ def add_user(name, image_path):
     conn.close()
 
 
+def check_user_exists(conn, name):
+    """Check if a user with the given name already exists in the database."""
+    name = name.strip().title()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM users WHERE name = ?", (name,))
+    return cursor.fetchone()[0] > 0
+
+
 if __name__ == "__main__":
-    # conn = sqlite3.connect(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+    conn = sqlite3.connect(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
     # create_database(conn)
     # Example: Add a user
     # add_user("arslaan siddiqui", r"E:\Face-Recognition-for-Login-Authentication-System\assets\photo.jpg")
@@ -148,11 +172,14 @@ if __name__ == "__main__":
     # Example: Retrieve all users
     # users = retrieve_all_users()
     # for user in users:
-    #     print(f"User: {user['name']}, Encoding Type: {user['face_encoding']}")
+    #     print(f"User: {user['name']}, Encoding: {user['face_encoding']}")
 
-    embedding1 = generate_embedding(r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
-    print(embedding1)
+    # embedding1 = generate_embedding(r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
+    # print(embedding1)
 
     # embedding2 = generate_embedding(r"E:\Face-Recognition-for-Login-Authentication-System\assets\photo.jpg")
     # embedding2 = generate_embedding(0.3487)
     # print(embedding2)
+
+    check_user_exists = check_user_exists(conn, "Arslaan siddiqui")
+    print(check_user_exists)
