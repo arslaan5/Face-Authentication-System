@@ -2,45 +2,59 @@ import face_recognition
 import numpy as np
 import cv2 as cv
 import sqlite3
-from utils import create_database, insert_user, retrieve_all_users, generate_embedding
+from .utils import create_database, insert_user, retrieve_all_users, generate_embedding
 import pickle
 
 def detect_face(image):
     """
     Detect face in an image using the face_recognition library.
+    
+    Args:
+        image (str or np.ndarray): Path to the image file or a NumPy array.
+
+    Returns:
+        tuple: (Face region as NumPy array, Bounding box coordinates as (x, y, width, height))
+               Returns (None, None) if no face is detected.
     """
     if isinstance(image, str):  # If input is a file path
+        if not cv.os.path.isfile(image):
+            raise FileNotFoundError(f"Image file '{image}' not found.")
         image = face_recognition.load_image_file(image)
-    elif isinstance(image, np.ndarray):  # If input is a NumPy array
-        image = image
-    else:
-        raise ValueError("Input must be a file path or a NumPy image array")
+    elif not isinstance(image, np.ndarray):
+        raise ValueError("Input must be a file path or a NumPy array.")
+    
+    if image is None or len(image.shape) < 2:
+        raise ValueError("Invalid image. Please provide a valid image file or NumPy array.")
+    
+    if image.ndim == 2:  # Grayscale
+        image = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
+    elif image.shape[2] == 3:  # BGR to RGB
+        image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+
+    # Ensure the image is in 8-bit format
+    if image.dtype != np.uint8:
+        image = cv.normalize(image, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
 
     # Detect face locations in the image
     face_locations = face_recognition.face_locations(image)
 
-    if face_locations:
-        # Get the first detected face
-        top, right, bottom, left = face_locations[0]
+    if not face_locations:
+        print("No face detected.")
+        return None, None
 
-        # Extract the face region
-        face = image[top:bottom, left:right]
+    # Get the first detected face
+    top, right, bottom, left = face_locations[0]
+    face = image[top:bottom, left:right]
 
-        # Convert BGR to RGB (for displaying with matplotlib)
-        image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+    # Draw a rectangle around the detected face
+    cv.rectangle(image, (left, top), (right, bottom), (0, 255, 0), )
 
-        # Draw a rectangle around the detected face
-        cv.rectangle(image_rgb, (left, top), (right, bottom), (0, 255, 0), 4)
+    # Resize and normalize the face for model input
+    face = cv.resize(face, (160, 160))
+    face = face.astype(np.float32) / 255.0  # Normalize to [0, 1]
+    # face = np.expand_dims(face, axis=0)  # Add batch dimension
 
-        # Resize and normalize the face for model input
-        face = cv.resize(face, (160, 160))
-        face = np.expand_dims(face, axis=0)  # Add batch dimension
-        face = face.astype('float32') / 255  # Normalize to [0, 1]
-
-        return face, (left, top, right - left, bottom - top)  # Return face and bounding box
-
-    print("No face detected")
-    return None, None
+    return face, (left, top, right - left, bottom - top)  # Return face and bounding box
 
 
 def capture_faces():
@@ -186,5 +200,6 @@ def recognize_faces():
     cv.destroyAllWindows()
 
 
-# capture_faces()
-recognize_faces()
+if __name__ == "__main__":
+    # capture_faces()
+    recognize_faces()
