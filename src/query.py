@@ -1,6 +1,10 @@
 import sqlite3
+import os
 
-conn = sqlite3.connect('face_recognition.db')
+
+DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+
+conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 
 # cursor.execute('SELECT name, face_encoding FROM users')

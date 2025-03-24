@@ -4,6 +4,9 @@ import cv2 as cv
 import sqlite3
 from .utils import create_database, insert_user, retrieve_all_users, generate_embedding
 import pickle
+import os
+
+DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
 
 def detect_face(image):
     """
@@ -61,7 +64,7 @@ def capture_faces():
     """Capture and save faces from webcam in real-time using face_recognition."""
     
     # Connect to SQLite database
-    conn = sqlite3.connect(r'E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db')
+    conn = sqlite3.connect(DB_PATH)
     create_database(conn)
 
     # Initialize webcam

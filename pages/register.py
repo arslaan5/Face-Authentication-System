@@ -6,6 +6,10 @@ import sqlite3
 import re
 from src.components.main import detect_face
 from src.components.utils import generate_embedding, insert_user, check_user_exists
+import os
+
+
+DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
 
 # Set the header for the registration page
 st.header("Register")
@@ -34,7 +38,7 @@ def register_user(file):
 
     try:
         # Connect to the SQLite database
-        with sqlite3.connect(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db") as conn:
+        with sqlite3.connect(DB_PATH) as conn:
             # Check if the user already exists
             if check_user_exists(conn, name):
                 st.error(f"User '{name}' already exists. Please use a different name or contact the developer.")

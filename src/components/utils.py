@@ -6,6 +6,7 @@ import cv2 as cv
 import numpy as np
 from datetime import datetime
 
+DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
 
 def create_database(conn):
     """Create the SQLite database and users table if they do not exist
@@ -13,9 +14,6 @@ def create_database(conn):
     Args:
         conn (SQLite3 conn): Connection to the SQLite database
     """
-    
-    db_path = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
-    print("Database path:", db_path)  # Debugging step
 
     try:
         cursor = conn.cursor()
@@ -31,7 +29,10 @@ def create_database(conn):
 
         conn.commit()
         print("Database and table created successfully or already exists!")
-
+    
+    except sqlite3.OperationalError as e:
+        print("Database error:", e)
+    
     except sqlite3.Error as e:
         print("SQLite error:", e)
 
@@ -67,22 +68,18 @@ def retrieve_all_users():
         List: List of dictionaries of users with name and face encoding
     """
 
-    # Connect to the database
-    conn = sqlite3.connect(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Retrieve all users
     cursor.execute('SELECT name, face_encoding FROM users')
     rows = cursor.fetchall()
 
-    # Convert face encodings back to numpy arrays
     users = []
     for row in rows:
         name, face_encoding_blob = row
         face_encoding = pickle.loads(face_encoding_blob)
         users.append({'name': name, 'face_encoding': face_encoding})
-    
-    # Close the connection
+
     conn.close()
 
     return users
@@ -106,18 +103,15 @@ def generate_embedding(img):
         image = img
     else:
         raise ValueError("Invalid input type. Please provide a filepath or a NumPy array.")
-    
-    # Validate image format
+
     if image is None or len(image.shape) < 2:
         raise ValueError("Invalid image. Please provide a valid image file or array.")
     
-    # Convert image to RGB if needed
-    if image.shape[-1] == 1:  # Grayscale to RGB
+    if image.shape[-1] == 1:
         image = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
-    elif image.shape[-1] == 3:  # BGR to RGB
+    elif image.shape[-1] == 3:
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
-    # Ensure the image is in 8-bit format
     if image.dtype != np.uint8:
         image = cv.normalize(image, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
 
@@ -137,16 +131,12 @@ def add_user(name, image_path):
         image_path (str or filepath): Path to the image file
     """
 
-    # Encode the face
     face_encoding = generate_embedding(image_path)
 
-    # Convert the encoding to a binary format for storage
     face_encoding_blob = pickle.dumps(face_encoding)
 
-    # Connect to the database
-    conn = sqlite3.connect(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+    conn = sqlite3.connect(DB_PATH)
     
-    # Insert the user data and face encoding into the database
     insert_user(conn, name, face_encoding_blob)
 
     conn.close()
@@ -161,18 +151,18 @@ def check_user_exists(conn, name):
 
 
 if __name__ == "__main__":
-    conn = sqlite3.connect(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+    conn = sqlite3.connect(DB_PATH)
     # create_database(conn)
-    # Example: Add a user
+    # # Example: Add a user
     # add_user("arslaan siddiqui", r"E:\Face-Recognition-for-Login-Authentication-System\assets\photo.jpg")
     # add_user("Shah Rukh Khan", r"E:\Face-Recognition-for-Login-Authentication-System\assets\shahrukh.jpg")
     # add_user("Hrithik Roshan", r"E:\Face-Recognition-for-Login-Authentication-System\assets\hrithik.jpg")
     # add_user("Alia Bhatt", r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
 
     # Example: Retrieve all users
-    # users = retrieve_all_users()
-    # for user in users:
-    #     print(f"User: {user['name']}, Encoding: {user['face_encoding']}")
+    users = retrieve_all_users()
+    for user in users:
+        print(f"User: {user['name']}, Encoding: {user['face_encoding']}")
 
     # embedding1 = generate_embedding(r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
     # print(embedding1)
@@ -181,5 +171,5 @@ if __name__ == "__main__":
     # embedding2 = generate_embedding(0.3487)
     # print(embedding2)
 
-    check_user_exists = check_user_exists(conn, "Arslaan siddiqui")
-    print(check_user_exists)
+    # check_user_exists = check_user_exists(conn, "Arslaan siddiqui")
+    # print(check_user_exists)
