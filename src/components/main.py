@@ -36,7 +36,7 @@ def detect_face(image):
         image = cv.normalize(image, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
 
     # Detect face locations in the image
-    face_locations = face_recognition.face_locations(image)
+    face_locations = face_recognition.face_locations(image, number_of_times_to_upsample=3)
 
     if not face_locations:
         print("No face detected.")
