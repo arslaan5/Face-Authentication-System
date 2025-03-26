@@ -94,7 +94,7 @@ def register_user(file):
     image = convert_to_image(file)
     if image is None:
         return
-    st.image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), caption="Captured Image", width=240)
+    st.image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), caption="Uploaded Image", width=240)
 
     # Detect the face and generate its embedding
     embedding = detect_and_embed(image)
