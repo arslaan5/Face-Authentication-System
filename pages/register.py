@@ -66,7 +66,14 @@ if page == "Choose image from file":
     name_input = st.text_input("*Enter your name:", max_chars=50)
     submit_btn = st.button("Register", icon="📝", type="primary", use_container_width=True)
     if submit_btn:
-        register_user(name_input, image_file)
+        if image_file:
+            if name_input:
+                with st.spinner("Registering... Please wait.", show_time=True):
+                    register_user(name_input, image_file)
+            else:
+                st.warning("⚠️ Please enter your name before registering.")
+        else:
+            st.warning("⚠️ Please upload an image before registering.")
 
 if page == "Upload from camera":
     st.write("Ensure your face is clearly visible.")
@@ -75,4 +82,11 @@ if page == "Upload from camera":
     name_input = st.text_input("*Enter your name:", max_chars=50)
     submit_btn = st.button("Register", icon="📝", type="primary", use_container_width=True)
     if submit_btn:
-        register_user(name_input, camera_file)
+        if camera_file:
+            if name_input:
+                with st.spinner("Registering... Please wait.", show_time=True):
+                    register_user(name_input, camera_file)
+            else:
+                st.warning("⚠️ Please enter your name before registering.")
+        else:
+            st.warning("⚠️ Please capture an image before registering.")

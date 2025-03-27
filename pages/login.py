@@ -40,7 +40,11 @@ def login_user(file):
 
 st.write("Ensure your face is clearly visible.")
 # Camera input for capturing an image
-camera_file = st.camera_input("* Capture Image")
+camera_file = st.camera_input("*Capture Image")
 submit_btn = st.button("Login", icon="🔑", type="primary", use_container_width=True)
 if submit_btn:
-    login_user(camera_file)
+    if camera_file:
+        with st.spinner("Authenticating...", show_time=True):
+            login_user(camera_file)
+    else:
+        st.warning("⚠️ Please capture an image before logging in.")
