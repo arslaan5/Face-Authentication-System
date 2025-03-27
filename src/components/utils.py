@@ -5,6 +5,8 @@ import face_recognition
 import cv2 as cv
 import numpy as np
 from datetime import datetime
+import streamlit as st
+import re
 
 DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
 
@@ -36,7 +38,6 @@ def create_database(conn):
     except sqlite3.Error as e:
         print("SQLite error:", e)
 
-
 def insert_user(conn, name, face_encoding):
     """Insert a new user into the database with encodings
 
@@ -60,7 +61,6 @@ def insert_user(conn, name, face_encoding):
     except sqlite3.Error as e:
         print("SQLite error:", e)
 
-
 def retrieve_all_users():
     """Retrieve all users from the database.
 
@@ -83,7 +83,6 @@ def retrieve_all_users():
     conn.close()
 
     return users
-
 
 def generate_embedding(img):
     """Generate face embeddings
@@ -122,7 +121,6 @@ def generate_embedding(img):
     
     return embedding[0]
 
-
 def add_user(name, image_path):
     """Add a new user to the database using image file.
 
@@ -141,13 +139,118 @@ def add_user(name, image_path):
 
     conn.close()
 
-
 def check_user_exists(conn, name):
     """Check if a user with the given name already exists in the database."""
     name = name.strip().title()
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM users WHERE name = ?", (name,))
     return cursor.fetchone()[0] > 0
+
+def validate_name(name):
+    """
+    Validate the user's name to ensure it contains only letters and spaces.
+    
+    Args:
+        name (str): The name entered by the user.
+
+    Returns:
+        bool: True if the name is valid, False otherwise.
+    """
+    if not name or not re.match(r"^[a-zA-Z\s]+$", name):
+        st.warning("Please enter a valid name using only letters.")
+        return False
+    return True
+
+def convert_to_image(file):
+    """
+    Convert the uploaded file to an OpenCV image.
+    
+    Args:
+        file: The uploaded file.
+
+    Returns:
+        np.ndarray: The converted image, or None if the conversion fails.
+    """
+    try:
+        file_bytes = np.frombuffer(file.read(), np.uint8)
+        image = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
+        if image is None:
+            st.error("Invalid image. Please try again.")
+            return None
+        return image
+    except Exception as e:
+        st.error(f"Image processing failed: {e}")
+        return None
+
+def detect_and_embed(image):
+    """
+    Detect a face in the image and generate its embedding.
+    
+    Args:
+        image (np.ndarray): The image in which to detect the face.
+
+    Returns:
+        np.ndarray: The face embedding, or None if detection or embedding generation fails.
+    """
+    face, _ = detect_face(image)
+    if face is None:
+        st.error("No face detected. Please try again.")
+        return None
+    
+    try:
+        embedding = generate_embedding(face)
+        st.image(face, caption="Detected Face")
+        return embedding
+    except (FileNotFoundError, ValueError) as e:
+        st.error(f"❗ {e}")
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
+
+def detect_face(image):
+    """
+    Detect face in an image using the face_recognition library.
+    
+    Args:
+        image (str or np.ndarray): Path to the image file or a NumPy array.
+
+    Returns:
+        tuple: (Face region as NumPy array, Bounding box coordinates as (x, y, width, height))
+               Returns (None, None) if no face is detected.
+    """
+    if isinstance(image, str):  # If input is a file path
+        if not cv.os.path.isfile(image):
+            raise FileNotFoundError(f"Image file '{image}' not found.")
+        image = face_recognition.load_image_file(image)
+    elif not isinstance(image, np.ndarray):
+        raise ValueError("Input must be a file path or a NumPy array.")
+    
+    if image is None or len(image.shape) < 2:
+        raise ValueError("Invalid image. Please provide a valid image file or NumPy array.")
+    
+    if image.ndim == 2:
+        image = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
+    elif image.shape[2] == 3:
+        image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+
+    if image.dtype != np.uint8:
+        image = cv.normalize(image, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
+
+    face_locations = face_recognition.face_locations(image, number_of_times_to_upsample=3)
+
+    if not face_locations:
+        print("No face detected.")
+        return None, None
+
+    top, right, bottom, left = face_locations[0]
+    face = image[top:bottom, left:right]
+
+    cv.rectangle(image, (left, top), (right, bottom), (0, 255, 0), 2)
+
+    face = cv.resize(face, (160, 160))
+    face = face.astype(np.float32) / 255.0
+    # face = np.expand_dims(face, axis=0)  # Add batch dimension
+
+    return face, (left, top, right - left, bottom - top)
 
 
 if __name__ == "__main__":

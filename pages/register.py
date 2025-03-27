@@ -1,11 +1,8 @@
 import streamlit as st
 import cv2
-import numpy as np
 import pickle
 import sqlite3
-import re
-from src.components.main import detect_face
-from src.components.utils import generate_embedding, insert_user, check_user_exists
+from src.components.utils import insert_user, check_user_exists, validate_name, convert_to_image, detect_and_embed
 import os
 
 # Path to the SQLite database
@@ -13,66 +10,6 @@ DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\
 
 # Set the header for the registration page
 st.header("Register")
-
-def validate_name(name):
-    """
-    Validate the user's name to ensure it contains only letters and spaces.
-    
-    Args:
-        name (str): The name entered by the user.
-
-    Returns:
-        bool: True if the name is valid, False otherwise.
-    """
-    if not name or not re.match(r"^[a-zA-Z\s]+$", name):
-        st.warning("Please enter a valid name using only letters.")
-        return False
-    return True
-
-def convert_to_image(file):
-    """
-    Convert the uploaded file to an OpenCV image.
-    
-    Args:
-        file: The uploaded file.
-
-    Returns:
-        np.ndarray: The converted image, or None if the conversion fails.
-    """
-    try:
-        file_bytes = np.frombuffer(file.read(), np.uint8)
-        image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-        if image is None:
-            st.error("Invalid image. Please try again.")
-            return None
-        return image
-    except Exception as e:
-        st.error(f"Image processing failed: {e}")
-        return None
-
-def detect_and_embed(image):
-    """
-    Detect a face in the image and generate its embedding.
-    
-    Args:
-        image (np.ndarray): The image in which to detect the face.
-
-    Returns:
-        np.ndarray: The face embedding, or None if detection or embedding generation fails.
-    """
-    face, _ = detect_face(image)
-    if face is None:
-        st.error("No face detected. Please try again.")
-        return None
-    
-    try:
-        embedding = generate_embedding(face)
-        st.image(face, caption="Detected Face")
-        return embedding
-    except (FileNotFoundError, ValueError) as e:
-        st.error(f"❗ {e}")
-    except Exception as e:
-        st.error(f"An unexpected error occurred: {e}")
 
 def register_user(file):
     """
