@@ -11,27 +11,36 @@ DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\
 # Set the header for the registration page
 st.header("Register")
 
-def register_user(file):
+def register_user(username, file):
     """
     Register a new user by capturing their face and storing their details in the database.
     
     Args:
         file: The uploaded file containing the user's face image.
     """
-    # Get and validate the user's name
-    name = st.text_input("Enter your name: *").strip().title()
-    if not validate_name(name):
-        st.warning("Please enter your name.")
-        return
-    if not file:
-        st.warning("Please capture your face.")
-        return
-
     # Convert the uploaded file to an image
     image = convert_to_image(file)
     if image is None:
         return
     st.image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), caption="Uploaded Image", width=240)
+
+    # Get and validate the user's name
+    name = username.strip().title()
+    if not name:
+        st.warning("Please enter your name.")
+        return
+    if not validate_name(name):
+        return
+    if not file:
+        st.warning("Please capture your face.")
+        return
+    
+    # Connect to the SQLite database
+    with sqlite3.connect(DB_PATH) as conn:
+        # Check if the user already exists
+        if check_user_exists(conn, name):
+            st.error(f"🤦‍♀️ User '{name}' already exists. Please use a different name or contact the developer.")
+            return
 
     # Detect the face and generate its embedding
     embedding = detect_and_embed(image)
@@ -40,17 +49,10 @@ def register_user(file):
         return
 
     try:
-        # Connect to the SQLite database
-        with sqlite3.connect(DB_PATH) as conn:
-            # Check if the user already exists
-            if check_user_exists(conn, name):
-                st.error(f"🤦‍♀️ User '{name}' already exists. Please use a different name or contact the developer.")
-                return
-            
-            # Serialize the embedding and insert the new user into the database
-            embedding_blob = pickle.dumps(embedding)
-            insert_user(conn, name, embedding_blob)
-            st.success("✅ Registration successful!")
+        # Serialize the embedding and insert the new user into the database
+        embedding_blob = pickle.dumps(embedding)
+        insert_user(conn, name, embedding_blob)
+        st.success("✅ Registration successful!")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -60,13 +62,17 @@ page = st.sidebar.radio("Select registration option", ["Choose image from file",
 if page == "Choose image from file":
     st.write("Upload your image with clearly visible face.")
     # File uploader for selecting an image file
-    image = st.file_uploader("Choose an image", type=["jpg", "png"])
-    if image:
-        register_user(image)
+    image_file = st.file_uploader("*Choose an image", type=["jpg", "png"])
+    name_input = st.text_input("*Enter your name:", max_chars=50)
+    submit_btn = st.button("Register", icon="📝", type="primary", use_container_width=True)
+    if submit_btn:
+        register_user(name_input, image_file)
 
 if page == "Upload from camera":
     st.write("Ensure your face is clearly visible.")
     # Camera input for capturing an image
-    camera_file = st.camera_input("Capture Image *")
-    if camera_file:
-        register_user(camera_file)
+    camera_file = st.camera_input("*Capture Image")
+    name_input = st.text_input("*Enter your name:", max_chars=50)
+    submit_btn = st.button("Register", icon="📝", type="primary", use_container_width=True)
+    if submit_btn:
+        register_user(name_input, camera_file)
