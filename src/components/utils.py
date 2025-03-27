@@ -114,7 +114,7 @@ def generate_embedding(img):
     if image.dtype != np.uint8:
         image = cv.normalize(image, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
 
-    embedding = face_recognition.face_encodings(image, num_jitters=3)
+    embedding = face_recognition.face_encodings(image, num_jitters=2)
     
     if not embedding:
         raise ValueError("No face detected in the image.")
@@ -236,7 +236,7 @@ def detect_face(image):
     if image.dtype != np.uint8:
         image = cv.normalize(image, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
 
-    face_locations = face_recognition.face_locations(image, number_of_times_to_upsample=3)
+    face_locations = face_recognition.face_locations(image, number_of_times_to_upsample=2)
 
     if not face_locations:
         print("No face detected.")
