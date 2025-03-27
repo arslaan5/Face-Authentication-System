@@ -3,3 +3,6 @@ primaryColor="#6200EE"
 backgroundColor="#F5F5F5"
 secondaryBackgroundColor="#FFFFFF"
 textColor="#000000"
+
+[server]
+maxUploadSize = 50
