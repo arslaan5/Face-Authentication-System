@@ -179,8 +179,8 @@ def convert_to_image(file):
             return None
         return image
     except Exception as e:
-        st.error(f"Image processing failed: {e}")
         st.error("Please ensure you are uploading/capturing an image file.")
+        st.error(f"Image processing failed: {e}")
         return None
 
 def detect_and_embed(image):
