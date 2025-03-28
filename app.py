@@ -11,6 +11,11 @@ register_page = st.Page("pages/register.py", title="Register", icon="🎁")
 landing_page = st.Page("pages/landing.py", title="Home", icon="💖")
 logout_page = st.Page("pages/logout.py", title="Logout", icon="🔒")
 
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
+if 'username' not in st.session_state:
+    st.session_state.username = None
+
 # Show logout option only if user is authenticated
 if st.session_state.authenticated:
     pages = [landing_page, logout_page]
