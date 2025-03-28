@@ -52,7 +52,7 @@ def register_user(username, file):
         # Serialize the embedding and insert the new user into the database
         embedding_blob = pickle.dumps(embedding)
         insert_user(conn, name, embedding_blob)
-        st.success("✅ Registration successful!")
+        st.success("✅ Registration successful! You can now log in.")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
