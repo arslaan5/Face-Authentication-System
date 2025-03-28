@@ -13,7 +13,7 @@ The Face Authentication System is a web application built using Streamlit that a
 1. Clone the repository:
    ```bash
    git clone https://github.com/arslaan5/Face-Authentication-System
-   cd Face-Recognition-for-Login-Authentication-System
+   cd Face-Authentication-System
    ```
 
 2. Install the required dependencies:
