@@ -94,7 +94,7 @@ if page == "Choose image from file":
                     success = register_user(name_input, image_file)
 
                     if success:
-                        status_placeholder.success("✅ Registration Successful! You can now log in.")
+                        status_placeholder.success("✅ Registration Successful!")
                         countdown_placeholder = st.empty()
                         st.write("")
                         for i in range(5, 0, -1):
@@ -127,7 +127,7 @@ if page == "Upload from camera":
                     success = register_user(name_input, camera_file)
 
                     if success:
-                        status_placeholder.success("✅ Registration Successful! You can now log in.")
+                        status_placeholder.success("✅ Registration Successful!")
                         st.write("")
                         countdown_placeholder = st.empty()
                         st.write("")
