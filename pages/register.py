@@ -4,12 +4,12 @@ import pickle
 import sqlite3
 from src.components.utils import insert_user, check_user_exists, validate_name, convert_to_image, detect_and_embed
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Path to the SQLite database
-DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
-
-# Set the header for the registration page
-st.header("Register")
+DB_PATH = os.getenv("DB_PATH")
 
 def register_user(username, file):
     """
@@ -55,6 +55,9 @@ def register_user(username, file):
         st.success("✅ Registration successful! You can now log in.")
     except Exception as e:
         st.error(f"An error occurred: {e}")
+
+# Set the header for the registration page
+st.header("Register")
 
 # Sidebar options for image upload
 page = st.sidebar.radio("Select registration option", ["Choose image from file", "Upload from camera"])

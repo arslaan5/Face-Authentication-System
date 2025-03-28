@@ -7,8 +7,11 @@ import numpy as np
 from datetime import datetime
 import streamlit as st
 import re
+from dotenv import load_dotenv
 
-DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+load_dotenv()
+
+DB_PATH = os.getenv("DB_PATH")
 
 def create_database(conn):
     """Create the SQLite database and users table if they do not exist

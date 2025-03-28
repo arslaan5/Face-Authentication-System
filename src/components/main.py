@@ -5,9 +5,12 @@ import sqlite3
 from .utils import create_database, insert_user, retrieve_all_users, generate_embedding, detect_face
 import pickle
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Path to the SQLite database
-DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+DB_PATH = os.getenv("DB_PATH")
 
 def capture_faces():
     """

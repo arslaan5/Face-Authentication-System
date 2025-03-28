@@ -3,10 +3,11 @@ import os
 import numpy as np
 import face_recognition
 from src.components.utils import retrieve_all_users, convert_to_image, detect_and_embed
+from dotenv import load_dotenv
 
-st.title("Login")
+load_dotenv()
 
-DB_PATH = os.path.abspath(r"E:\Face-Recognition-for-Login-Authentication-System\face_recognition.db")
+DB_PATH = os.getenv("DB_PATH")
 
 def authenticate_user(embedding):
     try:
@@ -37,6 +38,8 @@ def login_user(file):
 
     authenticate_user(embedding)
 
+
+st.title("Login")
 
 st.write("Ensure your face is clearly visible.")
 # Camera input for capturing an image
