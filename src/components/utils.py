@@ -11,7 +11,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_PATH = os.getenv("DB_PATH", "face_recognition.db")
+def find_project_root(current_path=None, marker="requirements.txt"):
+    if current_path is None:
+        current_path = os.getcwd()
+
+    while True:
+        if marker in os.listdir(current_path):
+            return current_path
+        new_path = os.path.dirname(current_path)
+        if new_path == current_path:
+            # Reached the filesystem root
+            raise FileNotFoundError(f"Marker '{marker}' not found")
+        current_path = new_path
+
+root_path = find_project_root()
+
+DB_PATH = os.getenv("DB_PATH", root_path)
 
 def create_database(conn):
     """Create the SQLite database and users table if they do not exist
