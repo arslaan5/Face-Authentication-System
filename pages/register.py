@@ -2,15 +2,12 @@ import streamlit as st
 import cv2
 import pickle
 import sqlite3
-from src.components.utils import insert_user, check_user_exists, validate_name, convert_to_image, detect_and_embed
+from src.components.utils import DB_PATH, insert_user, check_user_exists, validate_name, convert_to_image, detect_and_embed
 import os
 from dotenv import load_dotenv
 import time
 
 load_dotenv()
-
-# Path to the SQLite database
-DB_PATH = os.getenv("DB_PATH", "face_recognition.db")
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
