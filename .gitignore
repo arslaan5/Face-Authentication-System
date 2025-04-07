@@ -5,3 +5,4 @@ test.py
 assets/
 __pycache__/
 .env
+.dockerignore
