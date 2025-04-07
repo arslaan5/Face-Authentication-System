@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Path to the SQLite database
-DB_PATH = os.getenv("DB_PATH")
+DB_PATH = os.getenv("DB_PATH", "face_recognition.db")
 
 def capture_faces():
     """

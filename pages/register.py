@@ -10,7 +10,7 @@ import time
 load_dotenv()
 
 # Path to the SQLite database
-DB_PATH = os.getenv("DB_PATH")
+DB_PATH = os.getenv("DB_PATH", "face_recognition.db")
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False

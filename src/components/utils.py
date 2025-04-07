@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_PATH = os.getenv("DB_PATH")
+DB_PATH = os.getenv("DB_PATH", "face_recognition.db")
 
 def create_database(conn):
     """Create the SQLite database and users table if they do not exist
@@ -266,10 +266,10 @@ if __name__ == "__main__":
     # add_user("Hrithik Roshan", r"E:\Face-Recognition-for-Login-Authentication-System\assets\hrithik.jpg")
     # add_user("Alia Bhatt", r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
 
-    # Example: Retrieve all users
-    users = retrieve_all_users()
-    for user in users:
-        print(f"User: {user['name']}, Encoding: {user['face_encoding']}")
+    # # Example: Retrieve all users
+    # users = retrieve_all_users()
+    # for user in users:
+    #     print(f"User: {user['name']}, Encoding: {user['face_encoding']}")
 
     # embedding1 = generate_embedding(r"E:\Face-Recognition-for-Login-Authentication-System\assets\alia.png")
     # print(embedding1)

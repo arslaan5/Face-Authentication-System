@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_PATH = os.getenv("DB_PATH")
+DB_PATH = os.getenv("DB_PATH", "face_recognition.db")
 
 conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
