@@ -1,8 +1,6 @@
 import sqlite3
-from dotenv import load_dotenv
-from src.components.utils import DB_PATH
+from src.components.create_db import DB_PATH
 
-load_dotenv()
 
 conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()

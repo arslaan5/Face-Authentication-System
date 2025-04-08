@@ -2,12 +2,10 @@ import face_recognition
 import numpy as np
 import cv2 as cv
 import sqlite3
-from .utils import DB_PATH, create_database, insert_user, retrieve_all_users, generate_embedding, detect_face
 import pickle
-import os
-from dotenv import load_dotenv
+from .utils import create_database, insert_user, retrieve_all_users, generate_embedding, detect_face
+from src.components.create_db import DB_PATH
 
-load_dotenv()
 
 def capture_faces():
     """

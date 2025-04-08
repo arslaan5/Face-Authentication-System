@@ -7,54 +7,8 @@ import numpy as np
 from datetime import datetime
 import streamlit as st
 import re
-from dotenv import load_dotenv
+from src.components.create_db import DB_PATH
 
-load_dotenv()
-
-def find_project_root(current_path=None, marker="requirements.txt"):
-    if current_path is None:
-        current_path = os.getcwd()
-
-    while True:
-        if marker in os.listdir(current_path):
-            return current_path
-        new_path = os.path.dirname(current_path)
-        if new_path == current_path:
-            # Reached the filesystem root
-            raise FileNotFoundError(f"Marker '{marker}' not found")
-        current_path = new_path
-
-root_path = find_project_root()
-
-DB_PATH = os.getenv("DB_PATH", root_path)
-
-def create_database(conn):
-    """Create the SQLite database and users table if they do not exist
-
-    Args:
-        conn (SQLite3 conn): Connection to the SQLite database
-    """
-
-    try:
-        cursor = conn.cursor()
-
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            face_encoding BLOB NOT NULL,
-            registration_date TEXT
-        )
-        ''')
-
-        conn.commit()
-        print("Database and table created successfully or already exists!")
-    
-    except sqlite3.OperationalError as e:
-        print("Database error:", e)
-    
-    except sqlite3.Error as e:
-        print("SQLite error:", e)
 
 def insert_user(conn, name, face_encoding):
     """Insert a new user into the database with encodings

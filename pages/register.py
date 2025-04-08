@@ -2,11 +2,10 @@ import streamlit as st
 import cv2
 import pickle
 import sqlite3
-from src.components.utils import DB_PATH, insert_user, check_user_exists, validate_name, convert_to_image, detect_and_embed
-from dotenv import load_dotenv
 import time
+from src.components.utils import insert_user, check_user_exists, validate_name, convert_to_image, detect_and_embed
+from src.components.create_db import DB_PATH
 
-load_dotenv()
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
