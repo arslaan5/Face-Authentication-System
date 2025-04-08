@@ -1,5 +1,4 @@
 import sqlite3
-import os
 from dotenv import load_dotenv
 from src.components.utils import DB_PATH
 

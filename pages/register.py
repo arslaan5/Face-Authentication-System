@@ -3,7 +3,6 @@ import cv2
 import pickle
 import sqlite3
 from src.components.utils import DB_PATH, insert_user, check_user_exists, validate_name, convert_to_image, detect_and_embed
-import os
 from dotenv import load_dotenv
 import time
 
