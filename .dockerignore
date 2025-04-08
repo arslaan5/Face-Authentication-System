@@ -1,0 +1,62 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Unit test / coverage reports
+coverage/
+.tox/
+.nox/
+*.cover
+*.py,cover
+.cache/
+nosetests.xml
+coverage.xml
+*.log
+pytest_cache/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Environment variables
+.env
+*.env
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Distribution / packaging
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Git / VCS
+.git/
+.gitignore
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# Docker-related
+Dockerfile
+.dockerignore
+
+# Other
+*.db
+*.sqlite3
+__snapshots__/
+*.pem
+*.crt
+*.key
+test.py
+README.md
+LICENSE
+assets/
