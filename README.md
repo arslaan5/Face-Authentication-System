@@ -31,12 +31,12 @@ The Face Authentication System is a web application built using Streamlit that a
 
 1. Pull the Docker image:
    ```bash
-   docker pull arslaan5/face-recognition-system
+   docker pull arslaan5/face-recognition-system:v1.0
    ```
 
 2. Run the Docker container:
    ```bash
-   docker run -p 8501:8501 arsl5/face-authentication-system:latest
+   docker run -p 8501:8501 arslaan5/face-recognition-system:v1.0
    ```
 
 3. Access the application in your web browser at `http://localhost:8501`.
