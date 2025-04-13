@@ -1,5 +1,5 @@
 import sqlite3
-from src.components.create_db import DB_PATH
+from components.create_db import DB_PATH
 
 
 conn = sqlite3.connect(DB_PATH)
