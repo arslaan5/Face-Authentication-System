@@ -3,22 +3,16 @@
 ## Overview
 The Face Authentication System is a web application built using Streamlit that allows users to register and log in using facial recognition technology. The application captures users' facial images, processes them to generate embeddings, and stores them in a SQLite database for authentication.
 
----
-
 ## Problem Statement
 - Traditional password-based authentication is vulnerable to various attacks like hacking and phishing.
 - Users often struggle with remembering or creating strong passwords.
 - This project aims to provide a more secure and user-friendly authentication method using biometrics.
-
----
 
 ## Objectives
 - To provide a secure authentication system using **facial recognition**.
 - To offer user convenience with easy facial registration and login.
 - To securely store user facial data in a **SQLite database**.
 - To reduce the risks associated with password breaches.
-
----
 
 ## How Face Recognition Works
 
@@ -32,22 +26,16 @@ The Face Authentication System is a web application built using Streamlit that a
 2. The system compares the new image with the stored embeddings.
 3. Access is granted if a match is found; otherwise, access is denied.
 
----
-
 ## Benefits
 - Enhanced security.
 - User-friendly interface.
 - Eliminates password management.
 - Reduces risks of cyberattacks.
 
----
-
 ## Limitations
 - Requires a camera.
 - Accuracy can be affected by lighting and camera quality.
 - Privacy concerns regarding facial data storage.
-
----
 
 ## Local Installation
 ### GitHub
@@ -96,8 +84,6 @@ The Face Authentication System is a web application built using Streamlit that a
   - **Utilities**: Functions for image processing, database interactions, and user management.
 
 ![Data Flow Diagram](images/dfd_diagram.png)
-
----
 
 ## Tools and Technologies
 - **Programming Language**: Python.
